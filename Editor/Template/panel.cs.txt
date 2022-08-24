@@ -1,0 +1,42 @@
+//Panel模版
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.U2D;
+using Qarth;
+
+namespace GameWish.Game
+{
+
+    public class #SCRIPTNAME# : AbstractAnimPanel
+    {
+        [SerializeField] private List<SpriteAtlas> m_Atlas = new List<SpriteAtlas>();
+        protected override void OnUIInit()
+        {
+            base.OnUIInit();
+        }
+
+        protected override void OnPanelOpen(params object[] args)
+        {
+            base.OnPanelOpen();
+        }
+
+        protected override void OnClose()
+        {
+            base.OnClose();
+        }
+
+        protected override void OnPanelHideComplete()
+        {
+            base.OnPanelHideComplete();
+            CloseSelfPanel();
+        }
+
+        private void OnClickClose()
+        {
+            HideSelfWithAnim();
+        }
+    }
+}
+

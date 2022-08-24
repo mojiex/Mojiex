@@ -1,0 +1,25 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+
+namespace Mojiex
+{
+    //CreateTime : #CREATETIME#
+    public class #SCRIPTNAME#
+    {
+        public static #SCRIPTNAME# Inst
+        {
+            get
+            {
+                if (_inst == null)
+                {
+                    _inst = new #SCRIPTNAME#();
+                }
+                return _inst;
+            }
+        }
+        private static #SCRIPTNAME# _inst;
+    }
+
+}

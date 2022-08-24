@@ -1,0 +1,21 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using Mojiex;
+
+//#CREATETIME#
+public class #PANELNAME# : UIObject
+{
+    private #PANELNAMECOM# m_panel;
+    public override void Init(GameObject gameObject)
+    {
+        base.Init(gameObject);
+        m_panel = m_go.GetComponent <#PANELNAMECOM#>();
+    }
+
+    public override void Close()
+    {
+        base.Close();
+    }
+}
