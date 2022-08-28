@@ -8,6 +8,12 @@ namespace Mojiex
     //CreateTime : 2022/8/21
     public class SupportBehavior : MonoBehaviour
     {
+        private class AfterAction
+        {
+            public Action action;
+            public float time;
+            public bool isRealtime;
+        }
         public static SupportBehavior Inst
         {
             get
@@ -17,8 +23,7 @@ namespace Mojiex
                     GameObject supportGameObject = new GameObject("SupportBehavior");
                     _inst = supportGameObject.AddComponent<SupportBehavior>();
                     DontDestroyOnLoad(supportGameObject);
-                    _inst.TimeCounter = new List<float>();
-                    _inst.AfterCallBack = new List<Action>();
+                    _inst.afterActions = new List<AfterAction>();
                     _inst.AddUpdateMethod(_inst.UpdateAfterAction);
                 }
                 return _inst;
@@ -29,17 +34,23 @@ namespace Mojiex
         private Action onUpdate;
         private Action onLateUpdate;
         private Action onFixedUpdate;
+        private Action onQuitGame;
 
         private List<float> TimeCounter;
         private List<Action> AfterCallBack;
+        private List<AfterAction> afterActions;
 
         /// <summary>
         /// time时间后执行action，执行一次
         /// </summary>
-        public void AddAfterAction(float time, Action action)
+        public void AddAfterAction(float time, Action action,bool isRealtime = false)
         {
-            TimeCounter.Add(time);
-            AfterCallBack.Add(action);
+            afterActions.Add(new AfterAction()
+            {
+                time = time,
+                action = action,
+                isRealtime = isRealtime,
+            });
         }
         public void AddUpdateMethod(Action onUpdate)
         {
@@ -66,6 +77,14 @@ namespace Mojiex
         {
             this.onFixedUpdate -= onUpdate;
         }
+        public void AddGameQuitMethod(Action gameQuit)
+        {
+            onQuitGame += gameQuit;
+        }
+        public void RemoveGameQuitMethod(Action gameQuit)
+        {
+            onQuitGame -= gameQuit;
+        }
 
         private void Update()
         {
@@ -81,23 +100,41 @@ namespace Mojiex
         }
         private void OnDestroy()
         {
-            TimeCounter.Clear();
-            AfterCallBack.Clear();
+            //TimeCounter.Clear();
+            //AfterCallBack.Clear();
+            afterActions.Clear();
         }
 
+        private void OnApplicationQuit()
+        {
+            onQuitGame?.Invoke();
+        }
+
+        private void OnApplicationFocus(bool focus)
+        {
+            
+        }
         private void UpdateAfterAction()
         {
             //由于有删除操作，使用由大向小遍历，保证下标存在
-            for (int i = TimeCounter.Count - 1; i >= 0; i--)
+            for (int i = afterActions.Count - 1; i >= 0; i--)
             {
-                TimeCounter[i] -= Time.deltaTime;
-                if (TimeCounter[i] <= 0)
+                afterActions[i].time -= afterActions[i].isRealtime ? Time.unscaledDeltaTime : Time.deltaTime;
+                if (afterActions[i].time <= 0)
                 {
-                    AfterCallBack[i]?.Invoke();
-                    AfterCallBack.RemoveAt(i);
-                    TimeCounter.RemoveAt(i);
+                    afterActions[i].action?.Invoke();
+                    afterActions.RemoveAt(i);
                 }
             }
+        }
+
+        private void Reset()
+        {
+            onUpdate = UpdateAfterAction;
+            onLateUpdate = null;
+            onFixedUpdate = null;
+
+            afterActions.Clear();
         }
     }
 

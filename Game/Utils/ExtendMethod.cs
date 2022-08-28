@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Text.RegularExpressions;
+using UnityEngine.UI;
 
 namespace Mojiex
 {
@@ -29,6 +30,20 @@ namespace Mojiex
             return transList.ToArray();
         }
 
+        public static void IterateGameObject(this GameObject tf,System.Action<GameObject> action)
+        {
+            Queue<Transform> queue = new Queue<Transform>();
+            queue.Enqueue(tf.transform);
+            while (queue.Count > 0)
+            {
+                var temp = queue.Dequeue();
+                action(temp.gameObject);
+                for (int i = 0; i < temp.childCount; i++)
+                {
+                    queue.Enqueue(temp.GetChild(i));
+                }
+            }
+        }
         /// <summary>
         /// 获取parent到当前transform的路径，如果当前物体是目标parent返回空,如果没有找到parent返回根目录到当前对象的路径
         /// </summary>
@@ -68,6 +83,28 @@ namespace Mojiex
                 }
             }
             return res;
+        }
+
+        public static RectTransform RectTransform(this Transform ts)
+        {
+            return ts as RectTransform;
+        }
+
+        public static RectTransform RectTransform(this GameObject go)
+        {
+            return go.transform.RectTransform();
+        }
+
+        public static T GetMissingComponent<T>(this GameObject com) where T : Component
+        {
+            if(com.TryGetComponent(out T component))
+            {
+                return component;
+            }
+            else
+            {
+                return com.AddComponent<T>();
+            }
         }
     }
 }

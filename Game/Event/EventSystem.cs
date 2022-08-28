@@ -33,7 +33,7 @@ namespace Mojiex
                     }
                     catch (Exception e)
                     {
-                        MDebug.Log(e);
+                        MDebug.LogError(e);
                     }
                 }
             }

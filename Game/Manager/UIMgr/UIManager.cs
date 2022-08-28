@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 namespace Mojiex
 {
@@ -9,11 +10,13 @@ namespace Mojiex
     public class UIManager : IMgr
     {
         private List<UIObject> m_uiObjects = new List<UIObject>();
+        private List<UIObject> maskUIs = new List<UIObject>();
         private bool inited = false;
 
         private Transform UITransform;
         private Transform UIRoot;
         private Camera uiCam;
+        private GameObject mask;
         public void Init()
         {
             if (IsInited())
@@ -43,6 +46,7 @@ namespace Mojiex
         public void Dispose()
         {
             m_uiObjects.Clear();
+            maskUIs.Clear();
             GameObject.Destroy(UITransform.gameObject);
         }
 
@@ -55,8 +59,7 @@ namespace Mojiex
             {
                 if (m_uiObjects[i].EscClose && m_uiObjects[i].m_go.activeInHierarchy)
                 {
-                    m_uiObjects[i].Close();
-                    m_uiObjects.RemoveAt(i);
+                    Close(m_uiObjects[i]);
                     return true;
                 }
             }
@@ -65,16 +68,154 @@ namespace Mojiex
 
         public T Add<T>() where T:UIObject,new()
         {
+            for (int i = 0; i < m_uiObjects.Count; i++)
+            {
+                if (m_uiObjects[i].GetType() == typeof(T))
+                {
+                    m_uiObjects[i].Show();
+                    return (T)m_uiObjects[i];
+                }
+            }
             T script = new T();
-            GameObject gameObject = GetPrefab(typeof(T));
-            script.Init(gameObject);
-            return default(T);
+            GameObject uigameObject = GetPrefab(typeof(T));
+            int layer = script.GetCurrentSortLayer();
+            CreateCanvas(uigameObject, layer);
+            script.Init(uigameObject);
+
+            m_uiObjects.Add(script);
+            return script;
         }
 
+        public void Close<T>() where T : UIObject
+        {
+            for (int i = 0; i < m_uiObjects.Count; i++)
+            {
+                if (m_uiObjects[i].GetType() == typeof(T))
+                {
+                    m_uiObjects[i].Close();
+                    CloseMask(m_uiObjects[i]);
+                    m_uiObjects.RemoveAt(i);
+                    return;
+                }
+            }
+        }
+
+        private void Close(UIObject uIObject)
+        {
+            if (m_uiObjects.Contains(uIObject))
+            {
+                uIObject.Close();
+                CloseMask(uIObject);
+                m_uiObjects.Remove(uIObject);
+                return;
+            }
+        }
+        public T Get<T>() where T : UIObject
+        {
+            for (int i = 0; i < m_uiObjects.Count; i++)
+            {
+                if (m_uiObjects[i].GetType() == typeof(T))
+                {
+                    return (T)m_uiObjects[i];
+                }
+            }
+            return null;
+        }
+
+        public void AddMask(UIObject uiObj)
+        {
+            CreateMask(uiObj.GetCurrentSortLayer() - 1);
+            maskUIs.Add(uiObj);
+        }
+        public void CloseMask(UIObject uiObj)
+        {
+            maskUIs.Remove(uiObj);
+            if (maskUIs.Count == 0)
+            {
+                mask.SetActive(false);
+            }
+            else
+            {
+                CreateMask(maskUIs[maskUIs.Count - 1].GetCurrentSortLayer() - 1);
+            }
+        }
+
+        public GameObject CreateMask(int layer)
+        {
+            if (mask != null)
+            {
+                mask.GetComponent<Canvas>().sortingOrder = layer;
+                mask.SetActive(true);
+                return mask;
+            }
+            else
+            {
+                mask = new GameObject("Mask");
+                mask.transform.localPosition = Vector3.zero;
+                mask.transform.localScale = Vector3.one;
+                Image img = mask.AddComponent<Image>();
+                img.color = new Color(0, 0, 0, 0.52f);
+                img.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.height);
+                img.raycastTarget = true;
+                AddToRoot(mask, GetLayer());
+                CreateCanvas(mask, layer);
+                return mask;
+            }
+        }
+
+        private void AddToRoot(GameObject ui, int layer)
+        {
+            RectTransform rt = ui.transform.GetComponent<RectTransform>();
+            Vector2 originOffsetMax = Vector2.zero, originOffsetMin = Vector2.zero;
+            if (rt != null)
+            {
+                originOffsetMax = rt.offsetMax;
+                originOffsetMin = rt.offsetMin;
+            }
+            ui.transform.SetParent(UIRoot);
+            if (rt != null)
+            {
+
+                rt.offsetMax = originOffsetMax;
+                rt.offsetMin = originOffsetMin;
+            }
+            ui.transform.localPosition = Vector3.zero;
+            ui.transform.localScale = Vector3.one;
+            ui.IterateGameObject((go) =>
+            {
+                if (go.layer == LayerMask.NameToLayer("Default"))
+                {
+                    go.layer = layer;
+                }
+            });
+        }
+        private int GetLayer()
+        {
+            return LayerMask.NameToLayer("UI");
+        }
         private GameObject GetPrefab(Type type)
         {
-
-            return new GameObject();
+            string prefabName = type.Name;
+            return GameObject.Instantiate(Resources.Load<GameObject>(prefabName), GetUIRoot());
         }
+        private void CreateCanvas(GameObject r,int layer)
+        {
+            Canvas canvs;
+            if(!r.TryGetComponent(out canvs))
+            {
+                canvs = r.AddComponent<Canvas>();
+            }
+            canvs.overrideSorting = true;
+            canvs.renderMode = RenderMode.ScreenSpaceCamera;
+            canvs.worldCamera = uiCam;
+            canvs.sortingOrder = layer;
+            LayerMask layerMask = new LayerMask();
+            layerMask.value = LayerMask.GetMask("UI");
+            r.GetMissingComponent<UIGraphicRaycaster>().SetLayerMask(layerMask);
+            r.GetMissingComponent<UIGraphicRaycaster>().ignoreReversedGraphics = false;
+        }
+
+        public Transform GetUIRoot() => UIRoot;
+        public Camera GetUICamera() => uiCam;
     }
 }
