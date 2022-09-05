@@ -8,12 +8,7 @@ namespace Mojiex
     //CreateTime : 2022/8/20
     public class EventSystem<T> where T: Enum
     {
-        private static Dictionary<T, List<Action<object[]>>> EventsActionMap;
-
-        public EventSystem()
-        {
-            EventsActionMap = new Dictionary<T, List<Action<object[]>>>();
-        }
+        private static Dictionary<T, List<Action<object[]>>> EventsActionMap = new Dictionary<T, List<Action<object[]>>>();
 
         ~EventSystem()
         {
@@ -25,6 +20,7 @@ namespace Mojiex
             if (EventsActionMap.ContainsKey(key))
             {
                 var list = EventsActionMap[key];
+                Debug.Log(list.Count);
                 for (int i = 0; i < list.Count; i++)
                 {
                     try
@@ -66,6 +62,15 @@ namespace Mojiex
             {
                 item.Value.Clear();
                 EventsActionMap.Remove(item.Key);
+            }
+        }
+
+        public static void RemoveAllListener(T key)
+        {
+            if (EventsActionMap.ContainsKey(key))
+            {
+                EventsActionMap[key].Clear();
+                EventsActionMap.Remove(key);
             }
         }
     }

@@ -18,6 +18,8 @@ namespace Mojiex
 {
     public class PlayerPrefabHelper
     {
+        //JsonMapper.RegisterImporter<int, string>((int input) => { return input.ToString(); });
+        //LitJson.JsonMapper.RegisterImporter<string, int>((string input) => { return Convert.ToInt32 (input); });
         private const string IV = "oregakimeruxxxxx";
 	    public static void Save<T>(T data) where T : BaseSaveInfo
         {
@@ -35,6 +37,15 @@ namespace Mojiex
                 return res;
             }
             string savedStr = DecryptString(PlayerPrefs.GetString(key), Const.Key, IV);
+            LitJson.JsonMapper.RegisterImporter<int, string>((int input) => { return input.ToString(); });
+            LitJson.JsonMapper.RegisterImporter<string, int>((string input) => 
+            {
+                if(int.TryParse(input,out int res))
+                {
+                    return res;
+                }
+                return 0; 
+            });
             T obj = JsonMapper.ToObject<T>(savedStr);
             //这里的保存主要是为了应对新添加的变量
             Save(obj);
@@ -101,5 +112,7 @@ namespace Mojiex
             }
             return plaintext;
         }
+
+
     }
 }

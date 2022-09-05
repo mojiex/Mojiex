@@ -13,7 +13,8 @@ namespace Mojiex
         public static void Init()
         {
             player = new PlayerModel();
-            //player.Init();
+            player.Init();
+            //MDebug.Log(player.GetInfo().name);
         }
     }
 }

@@ -26,8 +26,8 @@ namespace Mojiex
         public int DataCount => _data.Length;
         private List<UGUIListItem> itemPool = new List<UGUIListItem>();
 
-        public void UpdateView(object[] data) => UpdateView(Prefab, data);
-        public void UpdateView(GameObject prefab, object[] data)
+        public virtual void UpdateView(object[] data) => UpdateView(Prefab, data);
+        public virtual void UpdateView(GameObject prefab, object[] data)
         {
             if(prefab == null)
             {
@@ -52,6 +52,7 @@ namespace Mojiex
             for (int i = 0; i < data.Length; i++)
             {
                 itemPool[i].UpdateUI(data[i]);
+                itemPool[i].gameObject.SetActive(true);
             }
 
             if (TryGetComponent(out UnityEngine.UI.LayoutGroup _))

@@ -1,3 +1,4 @@
+using Mojiex.Pool;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace Mojiex
 
 		}
 
-		public virtual void UpdateUI(object obj)
+        public virtual void UpdateUI(object obj)
         {
 			_data = obj;
         }
