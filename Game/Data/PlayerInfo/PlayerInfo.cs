@@ -18,13 +18,13 @@ namespace Mojiex
         public int Gem;
         public List<int> characterList;
         public int star;
-        public string name;
+        //public List<int> name;
         public override void InitDefault()
         {
             level = 0;
             Gem = 0;
             star = 6;
-            name = "Mojiex";
+            //name = new List<int>() { 0, 0, 0 };
             characterList = new List<int> { 11, 2, 654, 321, 222, 3 };
         }
     }

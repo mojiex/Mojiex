@@ -1,0 +1,32 @@
+#region Header
+///Author:Mojiex
+///Github:https://github.com/mojiex/Mojiex
+///Create Time:#CREATETIME#
+///Framework Description:This framework is developed based on unity2019LTS,Lower unity version may not supported.
+#endregion
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using Mojiex;
+
+public class #PANELNAME# : UGUIListItem
+{
+    private #PANELNAMECOM# m_panel;
+    public override void Awake()
+    {
+        base.Awake();
+        m_panel = GetComponent <#PANELNAMECOM#>();
+    }
+
+    public override void UpdateUI(int index, object obj)
+    {
+        base.UpdateUI(index, obj);
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+    }
+}

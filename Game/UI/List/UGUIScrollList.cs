@@ -125,7 +125,7 @@ namespace Mojiex
                 {
                     m_scrollrect.ItemCount = value.Length;
                     if(m_scrollrect.GetSelected() == -1)
-                        Select(0);
+                        SelectItem(0);
                 }
             }
         }
@@ -148,7 +148,7 @@ namespace Mojiex
                 m_scrollrect.step = Step;
                 m_scrollrect.IsClamp = IsClamp;
             }
-            m_scrollrect.Item = Prefab;
+            m_scrollrect.Item = Prefab.gameObject;
             m_scrollrect.ViewPort = m_viewPort;
             if(StopDistance > 0)
             {
@@ -157,7 +157,7 @@ namespace Mojiex
             //m_scrollrect.Awake();
         }
 
-        public void Select(int index)
+        public void SelectItem(int index, System.Action onComplete = null)
         {
             if(m_scrollrect == null)
             {

@@ -73,9 +73,9 @@ namespace Mojiex
             for (int i = 0; i < ItemCount; i++)
             {
                 anchoredPositionList.Add(basePos);
-                float t = basePos.x - HorizonGap;
-                float y = Mathf.Abs(basePos.x - HorizonGap - minX);
-                float u = HorizonGap - OrignSize.x;
+                //float t = basePos.x - HorizonGap;
+                //float y = Mathf.Abs(basePos.x - HorizonGap - minX);
+                //float u = HorizonGap - OrignSize.x;
 
                 if (basePos.x - HorizonGap >= minX)
                 {

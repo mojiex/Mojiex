@@ -52,6 +52,23 @@ namespace Mojiex
             return obj;
         }
 
+        /// <summary>
+        /// 返回对象编码并且加密后的字符串
+        /// </summary>
+        public static string EncryptString(object obj, string key = Const.Key, string IV = IV)
+        {
+            return EncryptString(JsonMapper.ToJson(obj), key, IV);
+        }
+        public static string JsonString(object obj)
+        {
+            return JsonMapper.ToJson(obj);
+        }
+
+        public static T GetObject<T>(string plainText) where T : class
+        {
+            return JsonMapper.ToObject<T>(DecryptString(plainText));
+        }
+
         public static string EncryptString(string plainText,string Key,string IV)
         {
             if (plainText == null || plainText.Length <= 0)
@@ -82,7 +99,7 @@ namespace Mojiex
             return Convert.ToBase64String(encrypted);
         }
 
-        public static string DecryptString(string cipherStr, string Key, string IV)
+        public static string DecryptString(string cipherStr, string Key = Const.Key, string IV = IV)
         {
             var cipherText = Convert.FromBase64String(cipherStr);
             if (cipherText == null || cipherText.Length <= 0)

@@ -15,10 +15,14 @@ namespace Mojiex.Pool
         private Action<T> _destroyAction;
 
         private Stack<T> m_set;
+        private HashSet<T> m_usingSet;
 
         private int defaultSize;
         private int maxSize;
         private bool repeatCheck = true;
+
+        public int CountAll => m_count;
+        private int m_count = 0;
         public ObjectPool(Func<T> created, Action<T> get = null, Action<T> relese = null, Action<T> destroy = null, bool repeatCheck = true, int defaultSize = 10, int maxSize = 1000)
         {
             _createdFunc = created;
@@ -30,6 +34,7 @@ namespace Mojiex.Pool
             this.maxSize = maxSize;
             this.repeatCheck = repeatCheck;
             m_set = new Stack<T>(defaultSize);
+            m_usingSet = new HashSet<T>();
         }
 
         public ObjectPool(T PoolObj, bool repeatCheck = true, int defaultSize = 10, int maxSize = 1000)
@@ -39,16 +44,27 @@ namespace Mojiex.Pool
         }
         public T Get()
         {
-            T temp = (m_set.Count > 0) ? m_set.Pop() : _createdFunc();
+            T temp;
+            if ((m_set.Count > 0))
+            {
+                temp = m_set.Pop();
+            }
+            else
+            {
+                temp = _createdFunc();
+                m_count++;
+            }
+            
+            m_usingSet.Add(temp);
             _getAction?.Invoke(temp);
             return temp;
         }
 
-        public bool Relese(T value)
+        public bool Release(T value)
         {
             if(repeatCheck && m_set.Contains(value))
             {
-                throw new AggregateException("value has been released and added to pool");
+                throw new System.ArgumentException("value has been released and added to pool");
             }
             if(m_set.Count >= maxSize)
             {
@@ -57,18 +73,39 @@ namespace Mojiex.Pool
             }
 
             m_set.Push(value);
+            m_usingSet.Remove(value);
             _releseAction?.Invoke(value);
             return true;
         }
+
+        public void ReleaseAll()
+        {
+            foreach (var item in m_usingSet)
+            {
+                Release(item);
+            }
+        }
+
+        public void DestoryAll()
+        {
+            if (_destroyAction == null)
+            {
+                MDebug.LogError("destory action not set");
+                return;
+            }
+            ReleaseAll();
+            while (m_set.Peek() != null)
+            {
+                _destroyAction(m_set.Pop());
+            }
+        }
         public void Dispose()
         {
-            while(m_set.Count > 0)
+            ReleaseAll();
+            if(_destroyAction != null)
             {
-                _releseAction?.Invoke(m_set.Pop());
-            }
-            if (_poolObj != null)
-            {
-                _releseAction?.Invoke(_poolObj);
+                DestoryAll();
+                _destroyAction(_poolObj);
             }
         }
     }

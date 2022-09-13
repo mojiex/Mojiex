@@ -67,6 +67,9 @@ namespace Mojiex
             return path;
         }
 
+        /// <summary>
+        /// 符合条件的字符不会被替换
+        /// </summary>
         public static string RegexReplace(this string str,Regex regex,string replaceChar)
         {
             string res = "";
@@ -105,6 +108,43 @@ namespace Mojiex
             {
                 return com.AddComponent<T>();
             }
+        }
+
+        public static string[] SplitByComma(this string str)
+        {
+            return str.Split(',');
+        }
+
+        public static int[] ToInts(this string[] strings)
+        {
+            int[] res = new int[strings.Length];
+            for (int i = 0; i < strings.Length; i++)
+            {
+                try
+                {
+                    res[i] = int.Parse(strings[i]);
+                }
+                catch (Exception e)
+                {
+                    MDebug.LogError(e);
+                }
+            }
+            return res;
+        }public static float[] ToFloats(this string[] strings)
+        {
+            float[] res = new float[strings.Length];
+            for (int i = 0; i < strings.Length; i++)
+            {
+                try
+                {
+                    res[i] = float.Parse(strings[i]);
+                }
+                catch (Exception e)
+                {
+                    MDebug.LogError(e);
+                }
+            }
+            return res;
         }
     }
 }

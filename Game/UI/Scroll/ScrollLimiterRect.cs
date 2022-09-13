@@ -229,6 +229,21 @@ namespace Mojiex
             Debug.Log($"{originPos},{initPos + value * i * gap}");
             return initPos - value * i * gap;
         }
+
+        //private bool UpdatePos(Vector2 startValue,Vector2 endValue,float pos,ref Vector2 res)
+        //{
+        //    res = Vector2.zero;
+        //    if(pos > 1 || pos < 0)
+        //    {
+        //        MDebug.LogError($"pos : {pos} must in range of [0,1]");
+        //        return false;
+        //    }
+        //    if(pos == 1)
+        //    {
+        //        return false;
+        //    }
+        //    res = 
+        //}
     }
 
 }

@@ -14,24 +14,30 @@ using LitJson;
 namespace Mojiex
 {
 	//CreateTime : 2022/8/20
-	public class MenuItemAdd : MonoBehaviour
+	public class MenuItemAdd
 	{
 		/// <summary>
 		/// 正则表达式，匹配数字、字母下划线
 		/// </summary>
 		private static Regex regex = new Regex(@"[a-zA-Z_0-9]$");
-		private static string filePath = Application.dataPath + "/_Script/UI/";
-		private static Type[] tryTypes = new Type[] {typeof(Button),typeof(Toggle),typeof(Text),
+		private static Type[] tryTypes = new Type[] {typeof(UGUIList), typeof(Button),typeof(Toggle),typeof(Text),
 			typeof(Image),typeof(ScrollRect),typeof(LayoutGroup), typeof(Slider),typeof(Canvas),typeof(Transform) }; 
 
-		[MenuItem("GameObject/MUITool/CreateUIScript", priority = 0)]
-		private static void MyTest(MenuCommand menuCommand)
+		[MenuItem("GameObject/MUITool/CreatePanelScript", priority = 0)]
+		private static void CreateUIScript(MenuCommand menuCommand)
 		{
 			GameObject select = menuCommand.context as GameObject;
-			CreateTxtFile(FormatComTemplate(select.transform, "Assets/Mojiex/Editor/GameObject/UIPanelComTemplate.cs.txt"), select.name + "Com", true);
-			CreateTxtFile(FormatTemplate(select.transform, "Assets/Mojiex/Editor/GameObject/UIPanelTemplate.cs.txt"), select.name);
+			CreateTxtFile(FormatTemplate(select.transform, "Assets/Mojiex/Editor/GameObject/UIPanelTemplate.cs.txt"), select.name, ConstFilePath.panelFilePath);
+			CreateTxtFile(FormatComTemplate(select.transform, "Assets/Mojiex/Editor/GameObject/UIPanelComTemplate.cs.txt"), select.name + "Com", ConstFilePath.panelFilePath, true);
 		}
-        
+
+        [MenuItem("GameObject/MUITool/CreateItemScript", priority = 0)]
+        private static void CreateListItemScript(MenuCommand menuCommand)
+        {
+            GameObject select = menuCommand.context as GameObject;
+            CreateTxtFile(FormatTemplate(select.transform, "Assets/Mojiex/Editor/GameObject/UIItemTemplate.cs.txt"), select.name, ConstFilePath.ItemFilePath);
+            CreateTxtFile(FormatComTemplate(select.transform, "Assets/Mojiex/Editor/GameObject/UIPanelComTemplate.cs.txt"), select.name + "Com", ConstFilePath.ItemFilePath, true);
+        }
 		//取得要创建文件的路径
 		public static string GetSelectPathOrFallback()
 		{
@@ -86,13 +92,13 @@ namespace Mojiex
 
 				if (transList[i].Equals(trans))
 				{
-					Component += $"\tpublic {tryTypes[j]} {tempName};\n";
-					Getcomponent += $"\t\t{tempName} = GetComponent<{item.GetType()}>();\n";
+					Component += $"\tpublic {tryTypes[j]} {tempName};{System.Environment.NewLine}";
+					Getcomponent += $"\t\t{tempName} = GetComponent<{item.GetType()}>();{System.Environment.NewLine}";
 				}
 				else
 				{
-					Component += $"\tpublic {tryTypes[j]} {tempName};\n";
-					Getcomponent += $"\t\t{tempName} = transform.Find(\"{transList[i].GetPathToParentReverse(trans)}\").GetComponent<{tryTypes[j]}>();\n";
+					Component += $"\tpublic {tryTypes[j]} {tempName};{System.Environment.NewLine}";
+					Getcomponent += $"\t\t{tempName} = transform.Find(\"{transList[i].GetPathToParentReverse(trans)}\").GetComponent<{tryTypes[j]}>();{System.Environment.NewLine}";
 				}
 			}
 			text = Regex.Replace(text, "#PANELNAMECOM#", trans.name + "Com");
@@ -115,9 +121,8 @@ namespace Mojiex
 
 			return text;
 		}
-		private static void CreateTxtFile(string content, string name,bool rewrite = false)
+		private static void CreateTxtFile(string content, string name,string path, bool rewrite = false)
 		{
-			string path = filePath;
 			//获取当前所选择的目录（相对于Assets的路径）
 			string newFileName = name + ".cs";
 			//如果文件路径已经被占用，则变成临时文件路径
