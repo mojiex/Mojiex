@@ -39,7 +39,7 @@
 + 注销事件的单个响应调用EventSystem\<T\>.RemoveListener(T key, Action\<object[]\> CallBack)
 + 注销整个事件的响应调用EventSystem\<T\>.RemoveListener(T key)
 + 注销该System的事件调用EventSystem\<T\>.RemoveListener()
-#Excel ----
+# Excel ----
 ***不支持Excel文件的修改***
 ***Excel第1行是备注，第二行标注数据名和数据类型，程序会从第三行开始读取数据***
 ***目前支持的数据类型有int
