@@ -13,15 +13,18 @@ namespace Mojiex
         public static UIManager uiMgr;
         public static Pool.PoolManager poolMgr;
         public static SaveManager saveMgr;
+        public static SceneManager sceneMgr;
         public static void Init(Action onFinish = null)
         {
             uiMgr = new UIManager();
             poolMgr = new Pool.PoolManager();
             saveMgr = new SaveManager();
+            sceneMgr = new SceneManager();
 
             mgrs.Add(uiMgr);
             mgrs.Add(poolMgr);
             mgrs.Add(saveMgr);
+            mgrs.Add(sceneMgr);
 
             foreach (var item in mgrs)
             {

@@ -148,7 +148,7 @@ namespace Mojiex
                 m_scrollrect.step = Step;
                 m_scrollrect.IsClamp = IsClamp;
             }
-            m_scrollrect.Item = Prefab.gameObject;
+            m_scrollrect.Item = Prefab != null ? Prefab.gameObject : null;
             m_scrollrect.ViewPort = m_viewPort;
             if(StopDistance > 0)
             {

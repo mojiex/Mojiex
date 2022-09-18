@@ -17,6 +17,21 @@ namespace Mojiex
         private Transform UIRoot;
         private Camera uiCam;
         private GameObject mask;
+
+        public bool EnabeleEscCheck
+        {
+            get => _enabeleEscCheck;
+            set
+            {
+                if(_enabeleEscCheck == value)
+                    return;
+                _enabeleEscCheck = value;
+                EscCheckChanged(value);
+            }
+        }
+        private bool _enabeleEscCheck = true;
+        public class UIDefaultEscEvent : UnityEngine.Events.UnityEvent { }
+        public UIDefaultEscEvent uiDefaultEscEvent = new UIDefaultEscEvent();
         public void Init()
         {
             if (IsInited())
@@ -24,8 +39,10 @@ namespace Mojiex
                 return;
             }
             inited = true;
-            MDebug.Log("ui");
+            MDebug.Log("UiInit");
             CreateUITransform();
+            EscCheckChanged(_enabeleEscCheck);
+            uiDefaultEscEvent.AddListener(() => MDebug.Log("UIDefaultEscEvent"));
         }
 
         private void CreateUITransform()
@@ -47,8 +64,31 @@ namespace Mojiex
         {
             m_uiObjects.Clear();
             maskUIs.Clear();
+            uiDefaultEscEvent.RemoveAllListeners();
             GameObject.Destroy(UITransform.gameObject);
         }
+
+        #region Logic
+        private void EscCheckChanged(bool state)
+        {
+            if (!state)
+            {
+                SupportBehavior.Inst.RemoveUpdateMethod(EscCheckLogic);
+            }
+            else
+            {
+                SupportBehavior.Inst.AddUpdateMethod(EscCheckLogic);
+            }
+        }
+
+        private void EscCheckLogic()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape) && !EscCloseUI())
+            {
+                uiDefaultEscEvent?.Invoke();
+            }
+        }
+        #endregion
 
         /// <summary>
         /// 按esc后根据当前UI是否可见及其是否可以被关闭进行相关操作，有UI关闭返回true，否则返回false

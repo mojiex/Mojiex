@@ -130,7 +130,9 @@ namespace Mojiex
                 }
             }
             return res;
-        }public static float[] ToFloats(this string[] strings)
+        }
+
+        public static float[] ToFloats(this string[] strings)
         {
             float[] res = new float[strings.Length];
             for (int i = 0; i < strings.Length; i++)
@@ -145,6 +147,23 @@ namespace Mojiex
                 }
             }
             return res;
+        }
+
+        public static bool Contain<T>(this T[] array,T checkElem)
+        {
+            if(array == null)
+            {
+                return false;
+            }
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i].Equals(checkElem))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

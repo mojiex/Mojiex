@@ -15,7 +15,7 @@ namespace Mojiex
         public GameObject m_go;
         public bool isSystemUI = false;
         public bool neediOSScreenFix = false;
-        public bool EscClose { get; set; } = false;
+        public bool EscClose { get; set; } = true;
         public int forceDepth = -1;
         protected EUILayer currentSortLayer = EUILayer.Common;
         protected int LayerPriority

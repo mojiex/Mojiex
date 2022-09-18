@@ -52,16 +52,26 @@ namespace Mojiex
                 isRealtime = isRealtime,
             });
         }
-        public void AddUpdateMethod(Action onUpdate)
+        public void AddUpdateMethod(Action onUpdate,bool allowReapeat = false)
         {
+            if(!allowReapeat && this.onUpdate != null&&(this.onUpdate.GetInvocationList().Contain(onUpdate)))
+            {
+                MDebug.Log("Action Repeat");
+                return;
+            }
             this.onUpdate += onUpdate;
         }
         public void RemoveUpdateMethod(Action onUpdate)
         {
             this.onUpdate -= onUpdate;
         }
-        public void AddLateUpdateMethod(Action onUpdate)
+        public void AddLateUpdateMethod(Action onUpdate,bool allowReapeat = false)
         {
+            if (!allowReapeat && onLateUpdate != null && onLateUpdate.GetInvocationList().Contain(onUpdate))
+            {
+                MDebug.Log("Action Repeat");
+                return;
+            }
             this.onLateUpdate += onUpdate;
         }
         public void RemoveLateUpdateMethod(Action onUpdate)
@@ -69,8 +79,13 @@ namespace Mojiex
             this.onLateUpdate -= onUpdate;
         }
 
-        public void AddFixedUpdateMethod(Action onUpdate)
+        public void AddFixedUpdateMethod(Action onUpdate, bool allowReapeat = false)
         {
+            if (!allowReapeat && onFixedUpdate != null && onFixedUpdate.GetInvocationList().Contain(onUpdate))
+            {
+                MDebug.Log("Action Repeat");
+                return;
+            }
             this.onFixedUpdate += onUpdate;
         }
         public void RemoveFixedUpdateMethod(Action onUpdate)
