@@ -23,7 +23,7 @@ namespace Mojiex
             get => _enabeleEscCheck;
             set
             {
-                if(_enabeleEscCheck == value)
+                if (_enabeleEscCheck == value)
                     return;
                 _enabeleEscCheck = value;
                 EscCheckChanged(value);
@@ -106,7 +106,7 @@ namespace Mojiex
             return false;
         }
 
-        public T Add<T>() where T:UIObject,new()
+        public T Add<T>() where T : UIObject, new()
         {
             for (int i = 0; i < m_uiObjects.Count; i++)
             {
@@ -191,11 +191,15 @@ namespace Mojiex
             else
             {
                 mask = new GameObject("Mask");
-                mask.transform.localPosition = Vector3.zero;
-                mask.transform.localScale = Vector3.one;
+                var rectTransform = mask.AddComponent<RectTransform>();
+                rectTransform.localScale = Vector3.one;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.sizeDelta = Vector2.zero;
+                rectTransform.localPosition = Vector3.zero;
                 Image img = mask.AddComponent<Image>();
                 img.color = new Color(0, 0, 0, 0.52f);
-                img.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.height);
+                //img.rectTransform.sizeDelta = new Vector2(Screen.width, Screen.height);
                 img.raycastTarget = true;
                 AddToRoot(mask, GetLayer());
                 CreateCanvas(mask, layer);
@@ -238,10 +242,10 @@ namespace Mojiex
             string prefabName = type.Name;
             return GameObject.Instantiate(Resources.Load<GameObject>(prefabName), GetUIRoot());
         }
-        private void CreateCanvas(GameObject r,int layer)
+        private void CreateCanvas(GameObject r, int layer)
         {
             Canvas canvs;
-            if(!r.TryGetComponent(out canvs))
+            if (!r.TryGetComponent(out canvs))
             {
                 canvs = r.AddComponent<Canvas>();
             }
@@ -257,5 +261,6 @@ namespace Mojiex
 
         public Transform GetUIRoot() => UIRoot;
         public Camera GetUICamera() => uiCam;
+        public Rect GetUIRect() => UIRoot.RectTransform().rect;
     }
 }

@@ -115,7 +115,7 @@ namespace Mojiex
         #endregion
 
         #region List
-        public new object[] Data
+        public override object[] Data
         {
             get => base.Data;
             set

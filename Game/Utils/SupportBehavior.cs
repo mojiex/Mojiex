@@ -40,10 +40,12 @@ namespace Mojiex
         private List<Action> AfterCallBack;
         private List<AfterAction> afterActions;
 
+        public static bool isDestory { get; private set; } = false;
+
         /// <summary>
         /// time时间后执行action，执行一次
         /// </summary>
-        public void AddAfterAction(float time, Action action,bool isRealtime = false)
+        public void AddAfterAction(float time, Action action, bool isRealtime = false)
         {
             afterActions.Add(new AfterAction()
             {
@@ -52,9 +54,9 @@ namespace Mojiex
                 isRealtime = isRealtime,
             });
         }
-        public void AddUpdateMethod(Action onUpdate,bool allowReapeat = false)
+        public void AddUpdateMethod(Action onUpdate, bool allowReapeat = false)
         {
-            if(!allowReapeat && this.onUpdate != null&&(this.onUpdate.GetInvocationList().Contain(onUpdate)))
+            if (!allowReapeat && this.onUpdate != null && (this.onUpdate.GetInvocationList().Contain(onUpdate)))
             {
                 MDebug.Log("Action Repeat");
                 return;
@@ -65,7 +67,7 @@ namespace Mojiex
         {
             this.onUpdate -= onUpdate;
         }
-        public void AddLateUpdateMethod(Action onUpdate,bool allowReapeat = false)
+        public void AddLateUpdateMethod(Action onUpdate, bool allowReapeat = false)
         {
             if (!allowReapeat && onLateUpdate != null && onLateUpdate.GetInvocationList().Contain(onUpdate))
             {
@@ -118,6 +120,7 @@ namespace Mojiex
             //TimeCounter.Clear();
             //AfterCallBack.Clear();
             afterActions.Clear();
+            isDestory = true;
         }
 
         private void OnApplicationQuit()
@@ -127,7 +130,7 @@ namespace Mojiex
 
         private void OnApplicationFocus(bool focus)
         {
-            
+
         }
         private void UpdateAfterAction()
         {

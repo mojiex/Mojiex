@@ -18,7 +18,7 @@ namespace Mojiex
             Queue<Transform> queue = new Queue<Transform>();
             List<Transform> transList = new List<Transform>();
             queue.Enqueue(tf);
-            while(queue.Count > 0)
+            while (queue.Count > 0)
             {
                 var temp = queue.Dequeue();
                 transList.Add(temp);
@@ -30,7 +30,7 @@ namespace Mojiex
             return transList.ToArray();
         }
 
-        public static void IterateGameObject(this GameObject tf,System.Action<GameObject> action)
+        public static void IterateGameObject(this GameObject tf, System.Action<GameObject> action)
         {
             Queue<Transform> queue = new Queue<Transform>();
             queue.Enqueue(tf.transform);
@@ -47,7 +47,7 @@ namespace Mojiex
         /// <summary>
         /// 获取parent到当前transform的路径，如果当前物体是目标parent返回空,如果没有找到parent返回根目录到当前对象的路径
         /// </summary>
-        public static string GetPathToParentReverse(this Transform tf,Transform parent)
+        public static string GetPathToParentReverse(this Transform tf, Transform parent)
         {
             string path = "";
             //直接改动tf不知道会不会出问题，用temp当中间变量
@@ -70,12 +70,12 @@ namespace Mojiex
         /// <summary>
         /// 符合条件的字符不会被替换
         /// </summary>
-        public static string RegexReplace(this string str,Regex regex,string replaceChar)
+        public static string RegexReplace(this string str, Regex regex, string replaceChar)
         {
             string res = "";
             foreach (var item in str)
             {
-                
+
                 if (!regex.IsMatch(item.ToString()))
                 {
                     res += replaceChar;
@@ -95,12 +95,12 @@ namespace Mojiex
 
         public static RectTransform RectTransform(this GameObject go)
         {
-            return go.transform.RectTransform();
+            return go.GetComponent<RectTransform>();
         }
 
         public static T GetMissingComponent<T>(this GameObject com) where T : Component
         {
-            if(com.TryGetComponent(out T component))
+            if (com.TryGetComponent(out T component))
             {
                 return component;
             }
@@ -149,9 +149,9 @@ namespace Mojiex
             return res;
         }
 
-        public static bool Contain<T>(this T[] array,T checkElem)
+        public static bool Contain<T>(this T[] array, T checkElem)
         {
-            if(array == null)
+            if (array == null)
             {
                 return false;
             }

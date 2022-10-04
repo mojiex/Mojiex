@@ -45,7 +45,7 @@ namespace Mojiex
             return PlayerPrefabHelper.GetObject<ExcelDataHandler>(ReadBinaryFile("ExcelDataHandler", ConstFilePath.ExcelAssetPath));
         }
 
-        private static string ReadBinaryFile(string name, string path)
+        public static string ReadBinaryFile(string name, string path)
         {
             FileStream file = new FileStream(path + name, FileMode.Open, FileAccess.Read);
             BinaryReader reader = new BinaryReader(file);
@@ -56,6 +56,8 @@ namespace Mojiex
         }
 
         public List<ArchipelagoData> GetAllArchipelagoDatas() => excelData.m_ArchipelagoData;
+
+        public List<LocalizationData> GetAllLocalizationDatas() => excelData.m_LocalizationData;
     }
 
 }

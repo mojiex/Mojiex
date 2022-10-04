@@ -79,7 +79,8 @@ namespace Mojiex
             {
                 if (IsEmptyRow(collection[i], columnNum))
                 {
-                    throw new System.MissingFieldException($"The row data has null,row index is {i}");
+                    MDebug.LogWarning($"The row data has null,row index is {i}");
+                    continue;
                 }
                 IExcelData data = Activator.CreateInstance(type) as IExcelData;
                 data.FillData(collection[i]);
@@ -118,6 +119,10 @@ namespace Mojiex
             string content = "", fill = "";
             for (int i = 0; i < columnNum; i++)
             {
+                if (string.IsNullOrEmpty(collection[1][i].ToString()))
+                {
+                    continue;
+                }
                 string[] str = Regex.Replace(collection[1][i].ToString(),@"\s","").Split(':');
                 if(str.Length != 2)
                 {
@@ -214,7 +219,7 @@ namespace Mojiex
             streamWriter.Write(content);
             streamWriter.Close();
             AssetDatabase.ImportAsset(newFilePath);
-            AssetDatabase.Refresh();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
 
         private static void CreateBinaryFile(string content, string name, string path)

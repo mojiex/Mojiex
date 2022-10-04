@@ -18,6 +18,9 @@
 + 添加遮罩请使用Mgr.uiMgr.AddMask(T uiObj);其中T您的目标物体，该操作会在物体层级之下生成半透明黑色图片
 + 遮罩可以在物体销毁时自动关闭，不必手动调用Mgr.uiMgr.CloseMask(T uiObj);
 + Esc关闭最上层ui(暂未完成 2022/08/28)，可以调整EscClose指定是否响应Esc键
+### Ⅲ、其他组件
++ Mojiex.AnimateUI命名空间提供了一些组件重写，使组件一些变化中加入动画
++ SafeArea提供异形屏适配，挂在需要适配的组件上 --目前还未在真机测试
 ---
 # Data ----
 ***重要:在只修改数据类型而不修改数据名时，如果已经有保存的数据，读取时会导致类型转换错误***
@@ -39,10 +42,13 @@
 + 注销事件的单个响应调用EventSystem\<T\>.RemoveListener(T key, Action\<object[]\> CallBack)
 + 注销整个事件的响应调用EventSystem\<T\>.RemoveListener(T key)
 + 注销该System的事件调用EventSystem\<T\>.RemoveListener()
+---
 # Excel ----
 ***不支持Excel文件的修改***
+
 ***Excel第1行是备注，第二行标注数据名和数据类型，程序会从第三行开始读取数据***
-***目前支持的数据类型有int
+
+***目前支持的数据类型有int,int[],float,float[],string,string[]***
 + 通过添加 [] 来表示数组，例如int[]表示int数组
 + 第二行示例 ***id:int*** 读取后生成字段{public int id;}
 ***ArchipelagoData.xlsx及其同名文件用作测试，可以删除***
@@ -58,12 +64,20 @@
 + 如果有新的数据加入请在DictionaryStatic中加入以下格式代码
 ```c#
 {
-//请将代码中的Data字符串替换为您新加的excel表名
-public List<Data> GetAllDatas() => excelData.m_Data;
+    //请将代码中的Data字符串替换为您新加的excel表名
+    public List<Data> GetAllDatas() => excelData.m_Data;
 }
-```c#
-{
-//使用请参考以下代码
-//请将代码中的Data字符串替换为您新加的excel表名
-List<Data> Datas =DictionaryStatic.Inst.GetAllDatas();
+```
+```C#
+{ 
+    //使用时可以参考以下代码
+    //请将代码中的Data字符串替换为您新加的excel表名
+    List<Data> Datas =DictionaryStatic.Inst.GetAllDatas();
 }
+```
+---
+# Utils---
+## 1、有限状态机(FSM)
+### Ⅰ、有限状态机类FSM配合其状态类FSMBaseState使用
+### Ⅱ、提供有限状态机和MonoBehaivor包装类FSMObject，其中update统一放入SupportBehavior管理
+## 2、震动管理(VibrateHandle)

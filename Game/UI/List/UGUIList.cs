@@ -51,7 +51,7 @@ namespace Mojiex
         }
         private int m_select = -1;
 
-		public object[] Data
+		public virtual object[] Data
         {
             get => _data;
             set

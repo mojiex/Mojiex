@@ -30,6 +30,7 @@ namespace Mojiex
             {
                 item.Init();
             }
+            LocalizationTool.Inst.InitLangData();
             onFinish?.Invoke();
         }
 

@@ -12,10 +12,14 @@ using System;
 
 namespace Mojiex
 {
-    public class PlayerModel : IDataModel
+    public class PlayerModel
     {
         private PlayerInfo info;
 
+        public PlayerModel(PlayerInfo info = null)
+        {
+            this.info = info;
+        }
         public void Init()
         {
             this.info = Mgr.saveMgr.Load<PlayerInfo>();

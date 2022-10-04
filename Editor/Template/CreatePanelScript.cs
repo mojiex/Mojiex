@@ -37,6 +37,15 @@ public class PanelScript : EditorWindow
                     "Assets/Mojiex/Editor/Template/SingleInstance.cs.txt");
     }
 
+    [MenuItem("Assets/CreateScript/Other/FSMState", priority = 1)]
+    private static void CreateFSMStateScript()
+    {
+        ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0,
+                    ScriptableObject.CreateInstance<CreateScriptAsset>(),
+                    GetSelectPathOrFallback() + "/NewFSMState.cs", null,
+                    "Assets/Mojiex/Editor/Template/FSMState.cs.txt");
+    }
+
     public static void CreateMonsterScripts(string name)
     {
         ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0,

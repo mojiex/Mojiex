@@ -13,6 +13,7 @@ using System;
 namespace Mojiex
 {
     //该接口用于model类，model类用于数据处理，和BaseSaveInfo共同承担数据处理部分
+    [Obsolete("由于有的info不是load出的，而是套在别的info中，所以初始化需要传info进去，另外该接口没有什么存在的必要故弃用",false)]
     public interface IDataModel
     {
         /// <summary>

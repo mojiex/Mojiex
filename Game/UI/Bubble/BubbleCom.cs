@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Mojioex
+namespace Mojiex
 {
 
 
