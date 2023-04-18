@@ -35,6 +35,7 @@ namespace Mojiex
         private Action onLateUpdate;
         private Action onFixedUpdate;
         private Action onQuitGame;
+        private Action<bool> OnFocus;
 
         private List<float> TimeCounter;
         private List<Action> AfterCallBack;
@@ -102,6 +103,15 @@ namespace Mojiex
         {
             onQuitGame -= gameQuit;
         }
+        public void AddFocusMethod(Action<bool> gameFocus)
+        {
+            OnFocus += gameFocus;
+        }
+        public void RemoveFocusMethod(Action<bool> gameFocus)
+        {
+            OnFocus -= gameFocus;
+        }
+
 
         private void Update()
         {
@@ -130,7 +140,7 @@ namespace Mojiex
 
         private void OnApplicationFocus(bool focus)
         {
-
+            OnFocus?.Invoke(focus);
         }
         private void UpdateAfterAction()
         {
@@ -151,6 +161,7 @@ namespace Mojiex
             onUpdate = UpdateAfterAction;
             onLateUpdate = null;
             onFixedUpdate = null;
+            OnFocus = null;
 
             afterActions.Clear();
         }

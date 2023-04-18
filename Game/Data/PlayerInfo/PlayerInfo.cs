@@ -12,20 +12,10 @@ using System;
 
 namespace Mojiex
 {
-    public class PlayerInfo:BaseSaveInfo
+    public class PlayerInfo : BaseSaveInfo
     {
-        public int level;
-        public int Gem;
-        public List<int> characterList;
-        public int star;
-        //public List<int> name;
         public override void InitDefault()
         {
-            level = 0;
-            Gem = 0;
-            star = 6;
-            //name = new List<int>() { 0, 0, 0 };
-            characterList = new List<int> { 11, 2, 654, 321, 222, 3 };
         }
     }
 }

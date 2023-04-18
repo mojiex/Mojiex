@@ -20,7 +20,6 @@ namespace Mojiex
             if (EventsActionMap.ContainsKey(key))
             {
                 var list = EventsActionMap[key];
-                Debug.Log(list.Count);
                 for (int i = 0; i < list.Count; i++)
                 {
                     try

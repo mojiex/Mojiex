@@ -44,6 +44,19 @@ namespace Mojiex
                 }
             }
         }
+
+        public static void SetState(this GameObject go,bool state)
+        {
+            if(go.activeSelf && !state)
+            {
+                go.SetActive(false);
+            }
+            else if((!go.activeSelf) && state)
+            {
+                go.SetActive(true);
+            }
+        }
+
         /// <summary>
         /// 获取parent到当前transform的路径，如果当前物体是目标parent返回空,如果没有找到parent返回根目录到当前对象的路径
         /// </summary>
@@ -164,6 +177,125 @@ namespace Mojiex
             }
 
             return false;
+        }
+        public static T[] FillData<T>(this T[] array, T data)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = data;
+            }
+            return array;
+        }
+
+        /// <summary>
+        /// fill list with data,fill size equals list capacity
+        /// </summary>
+        public static List<T> FillData<T>(this List<T> array, T data)
+        {
+            for (int i = 0; i < array.Capacity; i++)
+            {
+                array[i] = data;
+            }
+            return array;
+        }
+        public static T[] ToArray<T>(this Mojiex.Math.Matrix<T> matrix)
+        {
+            T[] res = new T[matrix.Size];
+            int k = 0;
+            for (int i = 0; i < matrix.Row; i++)
+            {
+                for (int j = 0; j < matrix.Column; j++)
+                {
+                    res[k] = matrix[i, j];
+                    k++;
+                }
+            }
+            return res;
+        }
+
+        public static List<int> ToNonogramInfo(this bool[] matrix)
+        {
+            List<int> res = new List<int>();
+            int count = 0;
+            for (int i = 0; i < matrix.Length; i++)
+            {
+                if (matrix[i])
+                {
+                    count++;
+                    if (i + 1 >= matrix.Length)
+                    {
+                        res.Add(count);
+                    }
+                }
+                else
+                {
+                    if (i >= 1 && matrix[i - 1])
+                    {
+                        res.Add(count);
+                    }
+                    count = 0;
+                }
+            }
+            return res;
+        }
+        public static bool IsNullGameObject(this GameObject gameObject)
+        {
+            return GameObject.ReferenceEquals(gameObject, null);
+        }
+
+        public static int ToInt(this GameLevel value)
+        {
+            return (int)value;
+        }
+
+        /// <summary>
+        /// min include, max exclude,
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public static List<int> GetRandomInt(int min, int max, int count = 1)
+        {
+            List<int> res = new List<int>();
+            if (max - min < count)
+            {
+                MDebug.LogError("your range is too small to get num");
+                return res;
+            }
+            if (max - min == count)
+            {
+                for (int i = min; i < max; i++)
+                {
+                    res.Add(i);
+                }
+                return res;
+            }
+
+            if ((max - min) >= (2 * count))
+            {
+                int temp;
+                while (res.Count < count)
+                {
+                    temp = UnityEngine.Random.Range(min, max);
+                    if (!res.Contains(temp))
+                    {
+                        res.Add(temp);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = min; i < max; i++)
+                {
+                    res.Add(i);
+                }
+                while (res.Count > count)
+                {
+                    res.RemoveAt(UnityEngine.Random.Range(0, res.Count));
+                }
+            }
+            return res;
         }
     }
 }

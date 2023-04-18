@@ -30,8 +30,10 @@ namespace Mojiex
             }
         }
         private bool _enabeleEscCheck = true;
-        public class UIDefaultEscEvent : UnityEngine.Events.UnityEvent { }
-        public UIDefaultEscEvent uiDefaultEscEvent = new UIDefaultEscEvent();
+        public class UIEvents : UnityEngine.Events.UnityEvent { }
+        public UIEvents uiDefaultEscEvent = new UIEvents();
+        public UIEvents onClosePanel = new UIEvents();
+        public UIEvents onAddPanel = new UIEvents();
         public void Init()
         {
             if (IsInited())
@@ -39,7 +41,7 @@ namespace Mojiex
                 return;
             }
             inited = true;
-            MDebug.Log("UiInit");
+            MDebug.Log("[UI:Init]");
             CreateUITransform();
             EscCheckChanged(_enabeleEscCheck);
             uiDefaultEscEvent.AddListener(() => MDebug.Log("UIDefaultEscEvent"));
@@ -52,7 +54,7 @@ namespace Mojiex
             UITransform = uiPrefab.transform;
             UIRoot = UITransform.Find("UIRoot");
             uiCam = UITransform.Find("UIcamera").GetComponent<Camera>();
-            MDebug.Log("Created");
+            MDebug.Log("[UI:Created]");
         }
 
         public bool IsInited()
@@ -99,6 +101,7 @@ namespace Mojiex
             {
                 if (m_uiObjects[i].EscClose && m_uiObjects[i].m_go.activeInHierarchy)
                 {
+                    m_uiObjects[i].escCloseEvents.Invoke();
                     Close(m_uiObjects[i]);
                     return true;
                 }
@@ -123,6 +126,7 @@ namespace Mojiex
             script.Init(uigameObject);
 
             m_uiObjects.Add(script);
+            onAddPanel.Invoke();
             return script;
         }
 
@@ -135,6 +139,7 @@ namespace Mojiex
                     m_uiObjects[i].Close();
                     CloseMask(m_uiObjects[i]);
                     m_uiObjects.RemoveAt(i);
+                    onClosePanel.Invoke();
                     return;
                 }
             }
@@ -170,11 +175,11 @@ namespace Mojiex
         public void CloseMask(UIObject uiObj)
         {
             maskUIs.Remove(uiObj);
-            if (maskUIs.Count == 0)
+            if (maskUIs.Count == 0 && mask != null)
             {
                 mask.SetActive(false);
             }
-            else
+            else if(maskUIs.Count > 0)
             {
                 CreateMask(maskUIs[maskUIs.Count - 1].GetCurrentSortLayer() - 1);
             }
@@ -257,6 +262,15 @@ namespace Mojiex
             layerMask.value = LayerMask.GetMask("UI");
             r.GetMissingComponent<UIGraphicRaycaster>().SetLayerMask(layerMask);
             r.GetMissingComponent<UIGraphicRaycaster>().ignoreReversedGraphics = false;
+        }
+
+        public Type GetTopPanelType()
+        {
+            if(m_uiObjects.Count == 0)
+            {
+                return null;
+            }
+            return m_uiObjects[m_uiObjects.Count - 1].GetType();
         }
 
         public Transform GetUIRoot() => UIRoot;

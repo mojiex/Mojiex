@@ -19,47 +19,61 @@ namespace Mojiex
 
         //默认语言是开发时使用的语言，根据实际情况进行替换
         private const SystemLanguage DEFAULT_LANG = SystemLanguage.English;
-        public SystemLanguage CurrentLanguage { get; set; } = SystemLanguage.English;
+        public SystemLanguage CurrentLanguage { get; set; } = SystemLanguage.Chinese;
         /// <summary>
         /// (language,(key,language text))
         /// </summary>
-        private Dictionary<SystemLanguage, Dictionary<string,string>> LocalizationDataDic = new Dictionary<SystemLanguage, Dictionary<string, string>>();
+        private Dictionary<SystemLanguage, Dictionary<string, string>> LocalizationDataDic = new Dictionary<SystemLanguage, Dictionary<string, string>>();
         private LocalizationTool() { }
 
-        public void InitLangData()
+        public async void InitLangData(Action onFinish)
         {
-            var datas = DictionaryStatic.Inst.GetAllLocalizationDatas();
-            var langDataType = typeof(LocalizationData);
-            //var LangPool = from lang in langDataType select lang.Name;
-            Array LangEnum = Enum.GetValues(typeof(SystemLanguage));
-            foreach (var item in LangEnum)
+            for (int j = 0; j < 100; j++)
             {
-                System.Reflection.FieldInfo field = langDataType.GetField(item.ToString());
-                if (field != null)
+                MDebug.Log($"[DictionaryStatic : Inited {DictionaryStatic.Inst.init}]");
+                if (DictionaryStatic.Inst.init)
                 {
-                    Dictionary<string, string> keyLangDic = new Dictionary<string, string>();
-                    for (int i = 0; i < datas.Count; i++)
+                    var datas = DictionaryStatic.Inst.GetAllLocalizationDatas();
+                    var langDataType = typeof(LocalizationData);
+                    //var LangPool = from lang in langDataType select lang.Name;
+                    Array LangEnum = Enum.GetValues(typeof(SystemLanguage));
+                    foreach (var item in LangEnum)
                     {
-                        if (keyLangDic.ContainsKey(datas[i].Key))
+                        System.Reflection.FieldInfo field = langDataType.GetField(item.ToString());
+                        if (field != null)
                         {
-                            throw new ArgumentException($"key repeated,key is {datas[i].Key},index:{i}");
+                            Dictionary<string, string> keyLangDic = new Dictionary<string, string>();
+                            for (int i = 0; i < datas.Count; i++)
+                            {
+                                if (keyLangDic.ContainsKey(datas[i].Key))
+                                {
+                                    throw new ArgumentException($"key repeated,key is {datas[i].Key},index:{i}");
+                                }
+                                keyLangDic.Add(datas[i].Key, field.GetValue(datas[i]).ToString());
+                            }
+                            LocalizationDataDic.Add((SystemLanguage)item, keyLangDic);
                         }
-                        keyLangDic.Add(datas[i].Key, field.GetValue(datas[i]).ToString());
                     }
-                    LocalizationDataDic.Add((SystemLanguage)item, keyLangDic);
+                    onFinish?.Invoke();
+                    break;
+                }
+                else
+                {
+                    await System.Threading.Tasks.Task.Delay(100);
                 }
             }
+
         }
 
         public string GetLocalizationTxt(string key)
         {
-            string res = GetLocalizationTxt(CurrentLanguage,key);
+            string res = GetLocalizationTxt(CurrentLanguage, key);
             if (!string.IsNullOrEmpty(res))
             {
                 return res;
             }
 
-            res = GetLocalizationTxt(DEFAULT_LANG,key);
+            res = GetLocalizationTxt(DEFAULT_LANG, key);
             if (!string.IsNullOrEmpty(res))
             {
                 return res;
@@ -68,7 +82,7 @@ namespace Mojiex
             throw new ArgumentNullException("Default Lnguage Data not exist,Check your data file");
         }
 
-        public string GetLocalizationTxt(SystemLanguage language,string key)
+        public string GetLocalizationTxt(SystemLanguage language, string key)
         {
             if (LocalizationDataDic.ContainsKey(language)
                  && LocalizationDataDic[language].ContainsKey(key)

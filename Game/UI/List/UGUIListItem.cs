@@ -12,9 +12,15 @@ namespace Mojiex
 		protected RectTransform rectTransform;
         public int Index { get; protected set; } = 0;
         public new GameObject gameObject;
-		public virtual void Awake()
+        public bool ItemInited = false;
+        public virtual void Awake()
         {
-			rectTransform = transform as RectTransform;
+            if (ItemInited)
+            {
+                return;
+            }
+            ItemInited = true;
+            rectTransform = transform as RectTransform;
             gameObject = base.gameObject;
 		}
 
@@ -28,11 +34,14 @@ namespace Mojiex
             (value as UGUIListItem).Dispose();
         }
 
-        public virtual void OnGet<T>(T value) where T : IPoolObject { }
+        public virtual void OnGet<T>(T value) where T : IPoolObject 
+        {
+            (value as UGUIListItem).gameObject.SetState(true);
+        }
 
         public virtual void OnRelese<T>(T value) where T : IPoolObject
         {
-            (value as UGUIListItem).gameObject.SetActive(false);
+            (value as UGUIListItem).gameObject.SetState(false);
         }
 
         public virtual void UpdateUI(int index, object obj)

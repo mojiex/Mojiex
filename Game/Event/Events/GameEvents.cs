@@ -23,7 +23,7 @@ namespace Mojiex
         #endregion
 
         #region UI
-
+        OnUpdateUI,
         #endregion
 
         #region GameLogic

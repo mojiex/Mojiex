@@ -29,6 +29,7 @@ namespace Mojiex
         private int layerPriority = 0;
 
         public UnityEngine.Events.UnityEvent onDestroy = new UnityEngine.Events.UnityEvent();
+        public UIManager.UIEvents escCloseEvents = new UIManager.UIEvents();
 
         public virtual int GetCurrentSortLayer()
         {

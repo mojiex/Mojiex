@@ -8,6 +8,10 @@ namespace Mojiex
     //CreateTime : 2022/8/21
     public class Mgr
     {
+        ~Mgr()
+        {
+            Dispose();
+        }
         private static List<IMgr> mgrs = new List<IMgr>();
 
         public static UIManager uiMgr;
@@ -30,8 +34,9 @@ namespace Mojiex
             {
                 item.Init();
             }
-            LocalizationTool.Inst.InitLangData();
-            onFinish?.Invoke();
+
+            LocalizationTool.Inst.InitLangData(onFinish);
+            DataStatic.record.SetEnterTimeStamp();
         }
 
         public static void Dispose()

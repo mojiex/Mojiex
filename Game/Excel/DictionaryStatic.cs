@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
+using UnityEngine.Networking;
 
 namespace Mojiex
 {
@@ -27,12 +28,15 @@ namespace Mojiex
             }
         }
         private static DictionaryStatic _inst;
+        private string DictionaryData = "";
+        public bool init = false;
 
         private ExcelDataHandler excelData;
 
         private DictionaryStatic()
         {
-            excelData = InitExcelData();
+            //excelData = InitExcelData();
+            SupportBehavior.Inst.StartCoroutine(GetExcelData("ExcelDataHandler", ConstFilePath.ExcelAssetPath));
         }
 
         public static ExcelDataHandler GetExcelData()
@@ -42,7 +46,8 @@ namespace Mojiex
 
         private static ExcelDataHandler InitExcelData()
         {
-            return PlayerPrefabHelper.GetObject<ExcelDataHandler>(ReadBinaryFile("ExcelDataHandler", ConstFilePath.ExcelAssetPath));
+            ReadBinaryFile("ExcelDataHandler", ConstFilePath.ExcelAssetPath);
+            return PlayerPrefabHelper.GetObject<ExcelDataHandler>(DictionaryStatic.Inst.DictionaryData);
         }
 
         public static string ReadBinaryFile(string name, string path)
@@ -55,9 +60,29 @@ namespace Mojiex
             return res;
         }
 
-        public List<ArchipelagoData> GetAllArchipelagoDatas() => excelData.m_ArchipelagoData;
-
-        public List<LocalizationData> GetAllLocalizationDatas() => excelData.m_LocalizationData;
+        public List<LocalizationData> GetAllLocalizationDatas()
+        {
+            return excelData.m_LocalizationData;
+        }
+        IEnumerator ReadData(string path)
+        {
+            UnityWebRequest www = UnityWebRequest.Get(path);
+            yield return www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
+            {
+                throw new Exception("Net Connect fail");
+            }
+            using (BinaryReader reader = new BinaryReader(new MemoryStream(www.downloadHandler.data)))
+            {
+                DictionaryStatic.Inst.DictionaryData = reader.ReadString();
+            }
+        }
+        IEnumerator GetExcelData(string name, string path)
+        {
+            yield return SupportBehavior.Inst.StartCoroutine(ReadData(path + name));
+            excelData = PlayerPrefabHelper.GetObject<ExcelDataHandler>(DictionaryStatic.Inst.DictionaryData);
+            init = true;
+        }
     }
 
 }

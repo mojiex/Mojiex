@@ -14,28 +14,31 @@ namespace Mojiex
 {
     public class SaveManager : IMgr
     {
+        private bool isInited = false;
+
         public void Dispose()
         {
-            
+            DataStatic.Save();
         }
 
         public void Init()
         {
-
+            DataStatic.Init();
+            isInited = true;
         }
 
-        public T Load<T>() where T : BaseSaveInfo,new ()
+        public T Load<T>() where T : BaseSaveInfo, new()
         {
             return PlayerPrefabHelper.Load<T>();
         }
 
-        public void Save<T>(T data) where T:BaseSaveInfo
+        public void Save<T>(T data) where T : BaseSaveInfo
         {
             PlayerPrefabHelper.Save(data);
         }
         public bool IsInited()
         {
-            return true;
+            return isInited;
         }
     }
 }

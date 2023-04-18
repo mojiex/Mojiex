@@ -6,7 +6,7 @@ using System;
 namespace Mojiex
 {
     //CreateTime : 2022/8/24
-    public partial class Const
+    public static partial class Const
     {
         #region string
         //字符串长度应为32

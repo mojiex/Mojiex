@@ -1,3 +1,4 @@
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,14 +6,14 @@ using UnityEngine;
 
 namespace Mojiex
 {
-	public class UGUIList : MonoBehaviour
-	{
-		public UGUIListItem Prefab
+    public class UGUIList : MonoBehaviour
+    {
+        public UGUIListItem Prefab
         {
             get => m_prefab;
             set
             {
-                if(value == null)
+                if (value == null)
                 {
                     MDebug.LogError("NullReferenceException value is null");
                 }
@@ -23,7 +24,7 @@ namespace Mojiex
                 }
                 _objPool = new Pool.ObjectPool<UGUIListItem>(Creat, value.OnGet, value.OnRelese, value.OnDestory);
                 itemList.Clear();
-                if(Data != null && Data.Length > 0)
+                if (Data != null && Data.Length > 0)
                 {
                     itemList.Add(_objPool.Get());
                     UpdateView(_data);
@@ -38,7 +39,7 @@ namespace Mojiex
             get => m_select;
             set
             {
-                if(value < 0)
+                if (value < 0)
                 {
                     MDebug.LogError("selected index can not be less than zero.");
                 }
@@ -51,7 +52,7 @@ namespace Mojiex
         }
         private int m_select = -1;
 
-		public virtual object[] Data
+        public virtual object[] Data
         {
             get => _data;
             set
@@ -64,31 +65,44 @@ namespace Mojiex
         }
         private object[] _data = null;
 
+        public UGUIListItem this[int index]
+        {
+            get
+            {
+                return itemList[index];
+            }
+        }
+
         public int DataCount => _data.Length;
-        private List<UGUIListItem> itemList = new List<UGUIListItem>();
+        protected List<UGUIListItem> itemList = new List<UGUIListItem>();
         private Pool.ObjectPool<UGUIListItem> _objPool;
 
         public virtual void UpdateView(object[] data) => UpdateView(Prefab, data);
         public virtual void UpdateView(UGUIListItem prefab, object[] data)
         {
-            if(prefab == null)
+            if (prefab == null)
             {
                 MDebug.LogError($"prefab is null");
                 return;
             }
-            if (prefab.gameObject.activeSelf)
+            try
             {
-                prefab.gameObject.SetActive(false);
+                prefab.gameObject.SetState(false);
             }
-            if(_objPool == null)
+            catch (System.Exception) { }
+            // if (prefab.gameObject.activeSelf)
+            // {
+            //     prefab.gameObject.SetActive(false);
+            // }
+            if (_objPool == null)
             {
-                _objPool = new Pool.ObjectPool<UGUIListItem>(Creat,prefab.OnGet,prefab.OnRelese,prefab.OnDestory);
+                _objPool = new Pool.ObjectPool<UGUIListItem>(Creat, prefab.OnGet, prefab.OnRelese, prefab.OnDestory);
             }
-            while(DataCount > itemList.Count)
+            while (DataCount > itemList.Count)
             {
                 itemList.Add(_objPool.Get());
             }
-            while(DataCount < itemList.Count)
+            while (DataCount < itemList.Count)
             {
                 _objPool.Release(itemList[itemList.Count - 1]);
             }
@@ -107,7 +121,7 @@ namespace Mojiex
 
         public UGUIListItem GetSelect()
         {
-            if(m_select < 0 && m_select >= itemList.Count)
+            if (m_select < 0 && m_select >= itemList.Count)
             {
                 MDebug.LogError("selected index out of bound 0~Data.Length");
                 return null;
@@ -117,9 +131,11 @@ namespace Mojiex
 
         private UGUIListItem Creat()
         {
-            return GameObject.Instantiate(Prefab, transform).GetComponent<UGUIListItem>();
+            UGUIListItem Item = GameObject.Instantiate(Prefab, transform).GetComponent<UGUIListItem>();
+            Item.Awake();
+            return Item;
         }
 
-	}
-	
+    }
+
 }

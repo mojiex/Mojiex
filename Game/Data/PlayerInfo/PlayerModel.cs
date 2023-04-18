@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 
 namespace Mojiex
 {
@@ -16,23 +17,14 @@ namespace Mojiex
     {
         private PlayerInfo info;
 
-        public PlayerModel(PlayerInfo info = null)
+        public PlayerModel(PlayerInfo info)
         {
             this.info = info;
-        }
-        public void Init()
-        {
-            this.info = Mgr.saveMgr.Load<PlayerInfo>();
         }
 
         public void Save()
         {
             Mgr.saveMgr.Save(info);
         }
-        public PlayerInfo GetInfo() => info;
-
-        public int GetLevel() => info.level;
-
-        public void SetLevel(int value) => info.level = value;
     }
 }
