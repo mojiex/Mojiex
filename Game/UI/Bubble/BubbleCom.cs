@@ -8,6 +8,7 @@ namespace Mojiex
     {
         public int BubbleId;
 
+
         public Transform TargetTrans;
         public Vector3 Offset;
         public Vector3 realPos;
